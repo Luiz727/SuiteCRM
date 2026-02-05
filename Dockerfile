@@ -38,6 +38,12 @@ WORKDIR /var/www/html
 # Copy application source
 COPY . /var/www/html
 
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
 # Set permissions for SuiteCRM
 # Create directories if they don't exist
 RUN mkdir -p cache custom modules themes data upload \
