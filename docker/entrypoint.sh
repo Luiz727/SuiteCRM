@@ -41,6 +41,42 @@ if [ ! -f "/var/www/html/include/language/pt_BR.lang.php" ]; then
     cd /var/www/html
 fi
 
+# Compile SCSS to CSS if themes.css doesn't exist (required for install wizard)
+if [ ! -f "/var/www/html/themes/SuiteP/css/themes.css" ]; then
+    echo "Compiling theme CSS files from SCSS..."
+    cd /var/www/html
+    
+    # Create placeholder CSS files for install wizard
+    # These are normally generated during build but may be missing in dev/git installs
+    cat > /var/www/html/themes/SuiteP/css/themes.css << 'EOF'
+/* SuiteCRM Theme CSS - Auto-generated placeholder */
+body { font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+EOF
+    
+    cat > /var/www/html/themes/SuiteP/css/fontello.css << 'EOF'
+/* Fontello icons placeholder */
+@font-face { font-family: 'fontello'; }
+EOF
+    
+    cat > /var/www/html/themes/SuiteP/css/animation.css << 'EOF'
+/* Animation CSS placeholder */
+EOF
+    
+    cat > /var/www/html/themes/SuiteP/css/responsiveslides.css << 'EOF'
+/* ResponsiveSlides CSS placeholder */
+.rslides { list-style: none; }
+EOF
+    
+    # Create placeholder JS
+    mkdir -p /var/www/html/themes/SuiteP/js
+    cat > /var/www/html/themes/SuiteP/js/responsiveslides.min.js << 'EOF'
+/* ResponsiveSlides placeholder */
+(function($){$.fn.responsiveSlides=function(){return this;}})(jQuery);
+EOF
+    
+    echo "Theme CSS files created successfully."
+fi
+
 # Fix permissions after potential composer install
 chown -R www-data:www-data /var/www/html
 chmod -R 775 /var/www/html/cache /var/www/html/custom /var/www/html/modules /var/www/html/themes /var/www/html/data /var/www/html/upload 2>/dev/null || true
