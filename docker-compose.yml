@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    restart: always
+    volumes:
+      - .anexos:/var/www/html/upload
+      - ./config_si.php:/var/www/html/config_si.php # Optional: for silent install config
+      # You might want to map persistent storage for the whole webroot or specific folders if this is a "pet" container
+      # For now, we follow the request to map .anexos
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=72.61.128.92
+      - DB_PORT=3320
+      - DB_DATABASE=suitecrm
+      - DB_USERNAME=sic_user
+      - DB_PASSWORD="ghtsYE64qWsoIOaVNtlgmjMlaFkJtuXuHz2xGZqoTl4RrtTOc82SfwqKRTa0V"
+    networks:
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.suitecrm-app.rule=Host(`crm.ezzy.tec.br`)"
+      - "traefik.http.routers.suitecrm-app.entrypoints=websecure"
+      - "traefik.http.routers.suitecrm-app.tls.certresolver=letsencrypt"
+      - "traefik.http.services.suitecrm-app.loadbalancer.server.port=80"
+      - "coolify.managed=true"
+
+  cron:
+    build: .
+    command: /bin/bash -c "cron && tail -f /var/log/cron.log"
+    restart: always
+    volumes:
+      - .anexos:/var/www/html/upload
+    depends_on:
+      - app
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=72.61.128.92
+      - DB_PORT=3320
+      - DB_DATABASE=suitecrm
+      - DB_USERNAME=sic_user
+      - DB_PASSWORD="ghtsYE64qWsoIOaVNtlgmjMlaFkJtuXuHz2xGZqoTl4RrtTOc82SfwqKRTa0V"
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true

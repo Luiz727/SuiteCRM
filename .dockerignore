@@ -1,0 +1,10 @@
+.git
+.anexos
+upload
+vendor
+node_modules
+.idea
+.vscode
+docker-compose.yml
+local.env
+.env
