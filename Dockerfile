@@ -39,7 +39,9 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Set permissions for SuiteCRM
-RUN chown -R www-data:www-data /var/www/html \
+# Create directories if they don't exist
+RUN mkdir -p cache custom modules themes data upload \
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 775 cache custom modules themes data upload
 
