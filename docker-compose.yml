@@ -7,7 +7,6 @@ services:
     restart: always
     volumes:
       - .anexos:/var/www/html/upload
-      - ./config_si.php:/var/www/html/config_si.php
       - suitecrm_data:/var/www/html
     environment:
       - DB_CONNECTION=mysql
