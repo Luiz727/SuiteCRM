@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  app:
+  crm-app:
     container_name: crm-app
     build: .
     restart: always
@@ -25,7 +25,7 @@ services:
       - "traefik.http.services.suitecrm-app.loadbalancer.server.port=80"
       - "coolify.managed=true"
 
-  cron:
+  crm-cron:
     container_name: crm-cron
     build: .
     command: /bin/bash -c "touch /var/log/cron.log && cron && tail -f /var/log/cron.log"
@@ -34,7 +34,7 @@ services:
       - .anexos:/var/www/html/upload
       - suitecrm_data:/var/www/html
     depends_on:
-      - app
+      - crm-app
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=72.61.128.92
