@@ -584,6 +584,8 @@ class AOR_Report extends Basic
                     $groupDisplay = $app_strings['LBL_NONE'];
                 }
 
+                $reportGroupID = create_guid();
+
                 // Fix #5427 If download pdf then not use tab-content and add css inline to work with mpdf
                 $pdf_style = "";
                 $action = $_REQUEST['action'];
@@ -593,21 +595,21 @@ class AOR_Report extends Basic
 
                 $html .= '<div class="panel panel-default">
                             <div class="panel-heading" style="' . $pdf_style . '">
-                                <a class="" role="button" data-toggle="collapse" href="#detailpanel_report_group_' . $groupValue . '" aria-expanded="false">
+                                <a class="" role="button" data-toggle="collapse" href="#detailpanel_report_group_' . $reportGroupID . '" aria-expanded="false">
                                     <div class="col-xs-10 col-sm-11 col-md-11">
                                         ' . $groupDisplay . '
                                     </div>
                                 </a>
                             </div>';
                 if ($action != 'DownloadPDF') {
-                    $html .= '<div class="panel-body panel-collapse collapse in" id="detailpanel_report_group_' . $groupValue . '">
+                    $html .= '<div class="panel-body panel-collapse collapse in" id="detailpanel_report_group_' . $reportGroupID . '">
                                 <div class="tab-content">';
                 } else {
                     $html .= '</div>';
                 }
 
 
-                $html .= $this->build_report_html($offset, $links, $groupValue, create_guid(), $extra);
+                $html .= $this->build_report_html($offset, $links, $groupValue, $reportGroupID, $extra);
                 $html .= ($action == 'downloadPDF') ? '' : '</div></div></div>';
                 // End
             }
@@ -656,7 +658,7 @@ class AOR_Report extends Basic
         }
 
         $html = '<div class="list-view-rounded-corners">';
-        $html.='<table id="report_table_'.$tableIdentifier.$group_value.'" width="100%" border="0" class="list view table-responsive aor_reports">';
+        $html.='<table id="report_table_'.$tableIdentifier.'" width="100%" border="0" class="list view table-responsive aor_reports">';
 
         $sql = "SELECT id FROM aor_fields WHERE aor_report_id = '" . $this->id . "' AND deleted = 0 ORDER BY field_order ASC";
         $result = $this->db->query($sql);
