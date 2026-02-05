@@ -1,27 +1,10 @@
 FROM php:8.1-apache
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    libicu-dev \
-    libonig-dev \
-    libxml2-dev \
-    libcurl4-openssl-dev \
-    libc-client-dev \
-    libkrb5-dev \
-    libldap2-dev \
-    cron \
-    git \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+# Download script to install PHP extensions (more robust than manual apt-get)
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Configure PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install -j$(nproc) \
+# Install system dependencies and PHP extensions
+RUN install-php-extensions \
     gd \
     zip \
     intl \
@@ -30,9 +13,18 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     soap \
     imap \
     opcache \
-    curl \
-    mbstring \
-    xml
+    ldap \
+    bcmath \
+    exif \
+    gettext \
+    xmlrpc
+
+# Install git, unzip and cron (system tools)
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    cron \
+    && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache modules
 RUN a2enmod rewrite
@@ -47,12 +39,11 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Set permissions for SuiteCRM
-# SuiteCRM requires specific directories to be writable
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 775 cache custom modules themes data upload
 
-# Create volume for uploads to ensure persistence if mapped incorrectly (fallback)
+# Create volumes
 VOLUME ["/var/www/html/upload"]
 
 # Expose port 80

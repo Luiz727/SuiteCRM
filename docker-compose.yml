@@ -7,9 +7,8 @@ services:
     restart: always
     volumes:
       - .anexos:/var/www/html/upload
-      - ./config_si.php:/var/www/html/config_si.php # Optional: for silent install config
-      # You might want to map persistent storage for the whole webroot or specific folders if this is a "pet" container
-      # For now, we follow the request to map .anexos
+      - ./config_si.php:/var/www/html/config_si.php
+      - suitecrm_data:/var/www/html
     environment:
       - DB_CONNECTION=mysql
       - DB_HOST=72.61.128.92
@@ -34,6 +33,7 @@ services:
     restart: always
     volumes:
       - .anexos:/var/www/html/upload
+      - suitecrm_data:/var/www/html
     depends_on:
       - app
     environment:
@@ -45,6 +45,10 @@ services:
       - DB_PASSWORD="ghtsYE64qWsoIOaVNtlgmjMlaFkJtuXuHz2xGZqoTl4RrtTOc82SfwqKRTa0V"
     networks:
       - coolify
+
+volumes:
+  suitecrm_data:
+
 
 networks:
   coolify:
