@@ -1,6 +1,14 @@
 #!/bin/bash
 set -e
 
+# Initialize volume from backup if empty (APP_BACKUP pattern)
+# This handles the case where a named volume is mounted over /var/www/html
+if [ ! -f "/var/www/html/index.php" ] && [ -d "/var/www/html_backup" ]; then
+    echo "Volume is empty. Initializing from application backup..."
+    cp -a /var/www/html_backup/. /var/www/html/
+    echo "Application files restored successfully."
+fi
+
 # If vendor doesn't exist, run composer install
 if [ ! -d "/var/www/html/vendor" ]; then
     echo "Vendor directory not found. Running composer install..."

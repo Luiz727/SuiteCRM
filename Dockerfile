@@ -51,6 +51,9 @@ RUN mkdir -p cache custom modules themes data upload \
     && chmod -R 755 /var/www/html \
     && chmod -R 775 cache custom modules themes data upload
 
+# Create backup of application for volume initialization (APP_BACKUP pattern)
+RUN cp -a /var/www/html /var/www/html_backup
+
 # Copy and set entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
