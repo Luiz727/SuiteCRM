@@ -51,11 +51,16 @@ RUN mkdir -p cache custom modules themes data upload \
     && chmod -R 755 /var/www/html \
     && chmod -R 775 cache custom modules themes data upload
 
+# Copy and set entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Create volumes
 VOLUME ["/var/www/html/upload"]
 
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
+# Use entrypoint script
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["apache2-foreground"]
