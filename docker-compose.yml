@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   app:
+    container_name: crm-app
     build: .
     restart: always
     volumes:
@@ -27,6 +28,7 @@ services:
       - "coolify.managed=true"
 
   cron:
+    container_name: crm-cron
     build: .
     command: /bin/bash -c "cron && tail -f /var/log/cron.log"
     restart: always
