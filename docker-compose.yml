@@ -29,7 +29,7 @@ services:
   cron:
     container_name: crm-cron
     build: .
-    command: /bin/bash -c "cron && tail -f /var/log/cron.log"
+    command: /bin/bash -c "touch /var/log/cron.log && cron && tail -f /var/log/cron.log"
     restart: always
     volumes:
       - .anexos:/var/www/html/upload
