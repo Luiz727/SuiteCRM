@@ -9,6 +9,29 @@ if [ ! -f "/var/www/html/index.php" ] && [ -d "/var/www/html_backup" ]; then
     echo "Application files restored successfully."
 fi
 
+# Always sync critical directories that may have been updated (install, language packs)
+# This ensures new language packs and install configurations are always applied
+if [ -d "/var/www/html_backup" ]; then
+    echo "Syncing install and language files from backup..."
+    
+    # Sync install directory (for lang.config.php and language files)
+    if [ -d "/var/www/html_backup/install" ]; then
+        cp -rf /var/www/html_backup/install/. /var/www/html/install/
+    fi
+    
+    # Sync language files
+    if [ -d "/var/www/html_backup/include/language" ]; then
+        cp -rf /var/www/html_backup/include/language/. /var/www/html/include/language/
+    fi
+    
+    # Sync module language files
+    if [ -d "/var/www/html_backup/modules" ]; then
+        find /var/www/html_backup/modules -name "pt_BR.lang.php" -exec sh -c 'dest="/var/www/html${1#/var/www/html_backup}"; mkdir -p "$(dirname "$dest")"; cp "$1" "$dest"' _ {} \;
+    fi
+    
+    echo "Critical files synced successfully."
+fi
+
 # If vendor doesn't exist, run composer install
 if [ ! -d "/var/www/html/vendor" ]; then
     echo "Vendor directory not found. Running composer install..."
